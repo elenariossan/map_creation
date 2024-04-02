@@ -1,0 +1,5 @@
+streamlit==1.31.1
+matplotlib==3.4.3
+folium
+pandas
+translate
