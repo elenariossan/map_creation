@@ -73,14 +73,16 @@ def demander_villes_couleur_icone(key, session_state):
     session_state.connect_trajectories[key] = connect_traj
 
     dash_array = st.checkbox("Ligne en pointillés ?", key=f"pointilles_{key}")
+    weight = st.slider("Epaisseur traits", 1.0, 6.0, step=0.1, format="%.1f", key=f"weight_{key}")
 
-    return ville_select, couleur_input, connect_traj, session_state, dash_array
+
+    return ville_select, couleur_input, connect_traj, session_state, dash_array, weight
 
 def create_map_from_user_input(session_state):
     m = folium.Map(location=[43.6008335,1.2680296], zoom_start=5, tiles='CartoDB positron')
 
     for key in range(1, session_state.num_lines + 1):
-        input_cities, couleur_fr, connect_traj, session_state, dash_array = demander_villes_couleur_icone(str(key), session_state)
+        input_cities, couleur_fr, connect_traj, session_state, dash_array, weight = demander_villes_couleur_icone(str(key), session_state)
         city_coordinates = []
         for city_name in input_cities:
             try:
@@ -105,7 +107,7 @@ def create_map_from_user_input(session_state):
                     print(session_state.colors[str(key)])
                     print("dash_array")
                     print(dash_array)
-                    agregar_marcadores_y_rutas(m, city_coordinates[i:i+2], session_state.colors[str(key)], dash_array, session_state.weight)
+                    agregar_marcadores_y_rutas(m, city_coordinates[i:i+2], session_state.colors[str(key)], dash_array, weight)
 
     st.markdown(get_table_download_link(m), unsafe_allow_html=True)
 
@@ -119,6 +121,6 @@ st.title("Création de cartes")
 session_state = get_session_state()
 #st.write(session_state.icon_size)
 #session_state.icon_size = st.sidebar.slider("Taille de l'icône", 1, 50)
-session_state.weight = st.sidebar.slider("Epaisseur traits", 1, 6)
+#session_state.weight = st.sidebar.slider("Epaisseur traits", 1, 6)
 session_state.num_lines = st.sidebar.slider("Nombre de lignes", 1, 30, session_state.num_lines)
 create_map_from_user_input(session_state)
